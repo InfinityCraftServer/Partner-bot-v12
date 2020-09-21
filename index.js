@@ -138,9 +138,9 @@ bot.on("message", async message =>{
 // Message delete
 bot.on("messageDelete", async message =>{
 
-    console.log("delete")
-    bot.users.cache.get("478260337536139264").send("Partnerbericht deleted in " + message.guild.name + "(" + message.guild.id + ")" )
-
+    if (message.author.id == "756614808454824076"){
+        bot.users.cache.get("478260337536139264").send("Partnerbericht deleted in " + message.guild.name + "(" + message.guild.id + ")" )
+    }
 })
 
 bot.login(process.env.token);
