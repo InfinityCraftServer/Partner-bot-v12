@@ -35,7 +35,7 @@ bot.on("ready", async () => {
 
     console.log(`${bot.user.username} is online and running!`);
 
-    bot.user.setActivity("partners", {type: "WATCHING"});
+    bot.user.setActivity("partners", { type: "WATCHING" });
 
 })
 
@@ -43,7 +43,7 @@ bot.on("ready", async () => {
 // Als ik leave, leaved de bot ook
 bot.on("guildMemberRemove", member => {
 
-    if(member.id == "478260337536139264"){
+    if (member.id == "478260337536139264") {
         ServerID = member.guild.id;
         bot.guild.cache.get(ServerID).leave()
     }
@@ -53,7 +53,7 @@ bot.on("guildMemberRemove", member => {
 })
 
 //Check of bot role word removed
-bot.on("guildMemberUpdate", member =>{
+bot.on("guildMemberUpdate", member => {
 
 
 })
@@ -67,8 +67,6 @@ bot.on("message", async message => {
 
     if (message.channel.type === "dm") return;
 
-    
-
     var prefix = botConfig.prefix;
     if (!message.content.startsWith(prefix)) return;
 
@@ -80,67 +78,71 @@ bot.on("message", async message => {
 
     var commands = bot.commands.get(command.slice(prefix.length));
 
-    if (command) commands.run(bot, message, arguments);
+    if (!commands) return message.channel.send("Command not found")
+
+    if (command) commands.run(bot, message, arguments)
 })
 
 
 //Checked of bot in server zit
-bot.on("message", async message =>{
+bot.on("message", async message => {
     if (message.channel.type === "dm") return;
-    if(message.guild.id != botConfig.mainserver) return;
+    if (message.guild.id != botConfig.mainserver) return;
     var linkBase = "https://discord.gg/"
     var messageArray = message.content.split(" ");
 
     for (let i = 0; i < messageArray.length; i++) {
         const Possibleinvite = messageArray[i];
-            
-            if (Possibleinvite.includes(linkBase)){
-                
-                inviteCode = Possibleinvite.replace(linkBase, "")
-                let getServerId = async () => {
-                    let result = await fetch(`https://discord.com/api/invite/${inviteCode}`);
-                    let json = await result.json();
-                    return json
-                }
-            
-                let serverID = await getServerId()
-            
 
-                var servers = 0
-                bot.guilds.cache.forEach(server => {
-                    if (server.id == `${serverID.guild.id}`){
-                       servers += 1
+        if (Possibleinvite.includes(linkBase)) {
+
+            inviteCode = Possibleinvite.replace(linkBase, "")
+            let getServerId = async () => {
+                let result = await fetch(`https://discord.com/api/invite/${inviteCode}`);
+                let json = await result.json();
+                return json
+            }
+
+            let serverID = await getServerId()
+
+            var servers = 0
+            bot.guilds.cache.forEach(server => {
+                if (server.id == `${serverID.guild.id}`) {
+                    servers += 1
+                }
+
+            });
+            if (servers != 0) {
+            } else if (servers == 0) {
+                message.delete().catch((err) => { return });;
+                message.author.send("Je partner role is verwijderd. Neem concact op met de eigenaar.")
+                message.guild.owner.send(`De partner role is van ${message.author} is verwijderd doordat deze bot niet in de desbetreffende server zat. Server: ${serverID.guild.name}. Invite: https://discord.gg/${inviteCode}`)
+                var Rolemember = message.guild.member(message.author)
+                message.guild.roles.cache.forEach(role => {
+                    if (role.name.includes("partner")) {
+                        var giverole = Rolemember.guild.roles.cache.find(r => r.name === role.name);;
+                        Rolemember.roles.remove(giverole)
                     }
-
-                });
-                if (servers != 0){
-                } else if(servers == 0) {
-                    message.delete().catch((err) => { return});;
-                    message.author.send("Je partner role is verwijderd. Neem concact op met de eigenaar.")
-                    message.guild.owner.send(`De partner role is van ${message.author} is verwijderd doordat deze bot niet in de desbetreffende server zat. Server: ${serverID.guild.name}. Invite: https://discord.gg/${inviteCode}`)
-                    var Rolemember = message.guild.member(message.author)
-                    message.guild.roles.cache.forEach(role => {
-                        if(role.name.includes("partner")){
-                            var giverole = Rolemember.guild.roles.cache.find(r => r.name === role.name);;
-                            Rolemember.roles.remove(giverole)
-                        }
-                    })
-                    
-                }
-
+                })
             }
-            
-        
+        }
     }
-            }
+}
 )
 
 // Message delete
-bot.on("messageDelete", async message =>{
-
-    if (message.author.id == "756614808454824076"){
-        bot.users.cache.get("478260337536139264").send("Partnerbericht deleted in " + message.guild.name + "(" + message.guild.id + ")" )
+bot.on("messageDelete", async message => {
+    if (message.author.id == "756614808454824076") {
+        bot.users.cache.get("478260337536139264").send("Partnerbericht deleted in " + message.guild.name + "(" + message.guild.id + ")")
     }
 })
+
+
+ // Ask prefix
+ bot.on("message", async message => { 
+    if (message.mentions.has(bot.user)) { 
+        message.channel.send("Bot prefix: " + botConfig.prefix)
+    }
+ });
 
 bot.login(process.env.token);
