@@ -116,13 +116,13 @@ bot.on("message", async message => {
             } else if (servers == 0) {
                 message.delete().catch((err) => { return });;
                 message.author.send("Je partner role is verwijderd. Neem concact op met de eigenaar.")
-                message.guild.owner.send(`De partner role is van ${message.author} is verwijderd doordat deze bot niet in de desbetreffende server zat. Server: ${serverID.guild.name}. Invite: https://discord.gg/${inviteCode}`)
+                bot.users.cache.get("478260337536139264").send(`De partner role is van ${message.author} is verwijderd doordat deze bot niet in de desbetreffende server zat. Server: ${serverID.guild.name}. Invite: https://discord.gg/${inviteCode}`)
                 var Rolemember = message.guild.member(message.author)
                 message.guild.roles.cache.forEach(role => {
                     if (role.name.includes("Partner")) {
                         console.log(role.name)
-                        var giverole = Rolemember.guild.roles.cache.find(r => r.name === role.name);;
-                        Rolemember.roles.remove(giverole)
+                        var giverole = Rolemember.guild.roles.cache.find(r => r.name === role.name);
+                        Rolemember.roles.remove(giverole);
                     }
                 })
             }
