@@ -120,6 +120,7 @@ bot.on("message", async message => {
                 var Rolemember = message.guild.member(message.author)
                 message.guild.roles.cache.forEach(role => {
                     if (role.name.includes("partner")) {
+                        console.log(role.name)
                         var giverole = Rolemember.guild.roles.cache.find(r => r.name === role.name);;
                         Rolemember.roles.remove(giverole)
                     }
